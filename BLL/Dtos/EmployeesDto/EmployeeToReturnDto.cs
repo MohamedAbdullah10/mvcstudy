@@ -9,7 +9,7 @@ namespace BLL.Dtos.EmployeesDto
 {
     public class EmployeeToReturnDto
     {
-    
+        public int Id { get; set; }
         public string Name { get; set; } = null!;
         public int Age { get; set; }
         public string? Address { get; set; }

@@ -1,7 +1,58 @@
-﻿
+﻿@model IEnumerable<EmployeeToReturnDto>
+
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Employees List";
 }
 
-<h1>Index</h1>
+<h2>Employees</h2>
 
+<a asp-action="Create" class="btn btn-primary mb-3">Create New Employee</a>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Age</th>
+            <th>Address</th>
+            <th>Email</th>
+            <th>Salary</th>
+            <th>Phone</th>
+            <th>Hiring Date</th>
+            <th>Gender</th>
+            <th>Type</th>
+            <th>Status</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var emp in Model)
+        {
+            <tr>
+                <td>@emp.Name</td>
+                <td>@emp.Age</td>
+                <td>@emp.Address</td>
+                <td>@emp.Email</td>
+                <td>@emp.Salary.ToString("C")</td>
+                <td>@emp.PhoneNumber</td>
+                <td>@emp.HiringDate.ToShortDateString()</td>
+                <td>@emp.Gender</td>
+                <td>@emp.EmployeeType</td>
+                <td>
+                    @if (emp.IsActive)
+                    {
+                        <span class="text-success">Active</span>
+                    }
+                    else
+                    {
+                        <span class="text-danger">Inactive</span>
+                    }
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@emp.Id" class="btn btn-sm btn-warning">Edit</a>
+                    <a asp-action="Details" asp-route-id="@emp.Id" class="btn btn-sm btn-info">Details</a>
+                    <a asp-action="Delete" asp-route-id="@emp.Id" class="btn btn-sm btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
