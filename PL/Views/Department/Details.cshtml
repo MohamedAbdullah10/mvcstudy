@@ -1,0 +1,86 @@
+﻿@model DepartmentDetailsToReturnDto
+
+@{
+    ViewData["Title"] = "Department Details";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow rounded-4 border-0">
+                <div class="card-header bg-info text-white">
+                    <h4 class="mb-0"><i class="fas fa-building"></i> Department Details</h4>
+                </div>
+
+                <div class="card-body">
+                    <ul class="nav nav-tabs mb-4" id="departmentTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="general-tab" data-bs-toggle="tab" data-bs-target="#general" type="button" role="tab">
+                                <i class="fas fa-info-circle"></i> General
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="admin-tab" data-bs-toggle="tab" data-bs-target="#admin" type="button" role="tab">
+                                <i class="fas fa-user-shield"></i> Administrator
+                            </button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content" id="departmentTabsContent">
+                        <!-- General Tab -->
+                        <div class="tab-pane fade show active" id="general" role="tabpanel">
+                            <dl class="row">
+                                <dt class="col-sm-4">Name</dt>
+                                <dd class="col-sm-8">@Model.Name</dd>
+
+                                <dt class="col-sm-4">Code</dt>
+                                <dd class="col-sm-8">@Model.Code</dd>
+
+                                <dt class="col-sm-4">Description</dt>
+                                <dd class="col-sm-8">@Model.Description</dd>
+
+                                <dt class="col-sm-4">Creation Date</dt>
+                                <dd class="col-sm-8">@Model.CreationDate.ToString("yyyy-MM-dd")</dd>
+                            </dl>
+                        </div>
+
+                        <!-- Administrator Tab -->
+                        <div class="tab-pane fade" id="admin" role="tabpanel">
+                            <dl class="row">
+                                <dt class="col-sm-4">Created By</dt>
+                                <dd class="col-sm-8">@Model.CreationBy</dd>
+
+                                <dt class="col-sm-4">Created On</dt>
+                                <dd class="col-sm-8">@Model.CreationOn.ToString("yyyy-MM-dd HH:mm")</dd>
+
+                                <dt class="col-sm-4">Last Modified By</dt>
+                                <dd class="col-sm-8">@Model.LastModifiedBy</dd>
+
+                                <dt class="col-sm-4">Last Modified On</dt>
+                                <dd class="col-sm-8">@Model.LastModifiedOn.ToString("yyyy-MM-dd HH:mm")</dd>
+
+                                <dt class="col-sm-4">Is Deleted?</dt>
+                                <dd class="col-sm-8">
+                                    @if (Model.IsDeleted)
+                                    {
+                                        <span class="badge bg-danger">Yes</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-success">No</span>
+                                    }
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 text-end">
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left"></i> Back to List
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
