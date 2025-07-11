@@ -5,8 +5,23 @@
 }
 
 <h2>Employees</h2>
-
+@Html.AntiForgeryToken()
 <a asp-action="Create" class="btn btn-primary mb-3">Create New Employee</a>
+
+<form asp-action="Index" asp-controller="Employee" method="get" class="mb-4">
+    <div class="input-group">
+        <div class="form-outline flex-grow-1">
+            <input type="search" id="searchInput" name="search" class="form-control" value="@ViewData["CurrentFilter"]" placeholder="Search by Name..." />
+        </div>
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-search"></i>
+        </button>
+    </div>
+</form>
+
+
+
+
 
 <table class="table table-striped">
     <thead>
@@ -21,6 +36,7 @@
             <th>Gender</th>
             <th>Type</th>
             <th>Status</th>
+            <th>Department</th>
             <th></th>
         </tr>
     </thead>
@@ -37,9 +53,10 @@
                 <td>@emp.HiringDate.ToShortDateString()</td>
                 <td>@emp.Gender</td>
                 <td>@emp.EmployeeType</td>
+               
                 <td>
                     @if (emp.IsActive)
-                    {
+                    {   
                         <span class="text-success">Active</span>
                     }
                     else
@@ -47,12 +64,69 @@
                         <span class="text-danger">Inactive</span>
                     }
                 </td>
+                <td>@emp.DepartmentName</td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@emp.Id" class="btn btn-sm btn-warning">Edit</a>
-                    <a asp-action="Details" asp-route-id="@emp.Id" class="btn btn-sm btn-info">Details</a>
-                    <a asp-action="Delete" asp-route-id="@emp.Id" class="btn btn-sm btn-danger">Delete</a>
-                </td>
+                  <partial name="_ButtonsPartial" model=emp.Id>
+                 </td>
             </tr>
         }
     </tbody>
 </table>
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Anti-forgery token for security
+            const antiForgeryToken = $('input[name="__RequestVerificationToken"]').val();
+
+            $('.js-delete').on('click', function () {
+                const button = $(this);
+                const employeeId = button.data('id');
+                const employeeName = button.data('name');
+
+                Swal.fire({
+                    title: 'Are U Sure ??',
+                    text: `Remove??: ${employeeName}`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Delete',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Send AJAX request to the server
+                        fetch(`/Employee/Delete/${employeeId}`, {
+                            method: 'POST',
+                            headers: {
+                                'RequestVerificationToken': antiForgeryToken
+                            }
+                        })
+                        .then(response => {
+                            if (response.ok) {
+                                 // On success, show a success message and remove the row from the table
+                                Swal.fire(
+                                    ' Done',
+                                    ' ',
+                                    'success'
+                                );
+                                button.closest('tr').fadeOut(500, function() {
+                                    $(this).remove();
+                                });
+                            } else {
+                                // On failure, show an error message
+                                Swal.fire(
+                                    '!',
+                                    ' .',
+                                    'error'
+                                );
+                            }
+                        })
+                        .catch(error => {
+                            Swal.fire('Wrong!', 'we can`t reach server   .', 'error');
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+}

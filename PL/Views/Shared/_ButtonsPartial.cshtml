@@ -1,0 +1,11 @@
+﻿@model int
+
+
+
+<td>
+    <a asp-action="Edit" asp-route-id="@Model" class="btn btn-sm btn-warning">Edit</a>
+    <a asp-action="Details" asp-route-id="@Model" class="btn btn-sm btn-info">Details</a>
+    <button class="btn btn-sm btn-danger js-delete" data-id="@Model">
+        <i class="fas fa-trash-alt"></i> Delete
+    </button>
+</td>

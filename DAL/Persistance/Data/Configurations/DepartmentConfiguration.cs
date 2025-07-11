@@ -18,6 +18,7 @@ namespace DAL.Persistance.Data.Configurations
             builder.Property(d => d.Code).HasColumnType("varchar(20)").IsRequired();
             builder.Property(d => d.CreationOn).HasDefaultValueSql("GETDATE()");
             builder.Property(d => d.LastModifiedOn).HasComputedColumnSql("GETDATE()");
+            builder.HasMany(d => d.Employees).WithOne(d => d.Department).HasForeignKey(d => d.DepartmentId).OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

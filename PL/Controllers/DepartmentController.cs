@@ -44,7 +44,11 @@ namespace PL.Controllers
                 var result = departmentService.CreateDepartment(departmentDto);
 
                 if (result > 0)
+                {
+                    TempData["Message"]= "Department Created Successfully";
                     return RedirectToAction(nameof(Index));
+
+                }
                 else
                 {
                     message = "Departmen is not Created";

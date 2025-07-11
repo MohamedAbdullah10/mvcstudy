@@ -1,0 +1,102 @@
+﻿@model BLL.Dtos.EmployeesDto.EmployeeDetailsToReturnDto
+
+@{
+    ViewData["Title"] = "Employee Details";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow rounded-4 border-0">
+                <div class="card-header bg-info text-white">
+                    <h4 class="mb-0"><i class="fas fa-user-circle"></i> Employee Details: @Model.Name</h4>
+                </div>
+
+                <div class="card-body">
+                    <ul class="nav nav-tabs mb-4" id="employeeTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="general-tab" data-bs-toggle="tab" data-bs-target="#general" type="button" role="tab">
+                                <i class="fas fa-info-circle"></i> General
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="admin-tab" data-bs-toggle="tab" data-bs-target="#admin" type="button" role="tab">
+                                <i class="fas fa-user-shield"></i> Administrator
+                            </button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content" id="employeeTabsContent">
+                        <div class="tab-pane fade show active" id="general" role="tabpanel">
+                            <dl class="row">
+                                <dt class="col-sm-4">Full Name</dt>
+                                <dd class="col-sm-8">@Model.Name</dd>
+
+                                <dt class="col-sm-4">Age</dt>
+                                <dd class="col-sm-8">@Model.Age</dd>
+
+                                <dt class="col-sm-4">Address</dt>
+                                <dd class="col-sm-8">@Model.Address</dd>
+
+                                <dt class="col-sm-4">Email</dt>
+                                <dd class="col-sm-8">@Model.Email</dd>
+
+                                <dt class="col-sm-4">Phone Number</dt>
+                                <dd class="col-sm-8">@Model.PhoneNumber</dd>
+
+                                <dt class="col-sm-4">Salary</dt>
+                                <dd class="col-sm-8">@Model.Salary.ToString("C")</dd>
+
+                                <dt class="col-sm-4">Hiring Date</dt>
+                                <dd class="col-sm-8">@Model.HiringDate.ToShortDateString()</dd>
+
+                                <dt class="col-sm-4">Gender</dt>
+                                <dd class="col-sm-8">@Model.Gender</dd>
+
+                                <dt class="col-sm-4">Employee Type</dt>
+                                <dd class="col-sm-8">@Model.EmployeeType</dd>
+
+                                <dt class="col-sm-4">Status</dt>
+                                <dd class="col-sm-8">
+                                    @if (Model.IsActive)
+                                    {
+                                        <span class="badge bg-success">Active</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">Inactive</span>
+                                    }
+                                </dd>
+                            </dl>
+                        </div>
+
+                        <div class="tab-pane fade" id="admin" role="tabpanel">
+                            <dl class="row">
+                                <dt class="col-sm-4">Created By</dt>
+                                <dd class="col-sm-8">@Model.CreationBy</dd>
+
+                                <dt class="col-sm-4">Created On</dt>
+                                <dd class="col-sm-8">@Model.CreationOn.ToString("yyyy-MM-dd HH:mm")</dd>
+
+                                <dt class="col-sm-4">Last Modified By</dt>
+                                <dd class="col-sm-8">@Model.LastModifiedBy</dd>
+
+                                <dt class="col-sm-4">Last Modified On</dt>
+                                <dd class="col-sm-8">@Model.LastModifiedOn.ToString("yyyy-MM-dd HH:mm")</dd>
+                            </dl>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 text-end">
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+                            <i class="fas fa-edit"></i> Edit
+                        </a>
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left"></i> Back to List
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -9,10 +9,10 @@ namespace BLL.Services.Employees
 {
     public interface IEmployeeService
     {
-        IEnumerable<EmployeeToReturnDto> GetAll();
+        IEnumerable<EmployeeToReturnDto> GetAll(string search);
         EmployeeDetailsToReturnDto ?GET(int id);
         int CreateEmployee(CreateEmployeeDto createEmployee);
-        int EditeEmployee(UpdateEmployeeDto updateEmployee);
+        int EditEmployee(UpdateEmployeeDto updateEmployee);
         int RemoveEmployee(int id);
     }
 }

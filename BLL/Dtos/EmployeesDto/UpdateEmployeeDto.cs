@@ -1,6 +1,8 @@
-﻿using System;
+﻿using DAL.Entities.Common.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -20,5 +22,6 @@ namespace BLL.Dtos.EmployeesDto
 
         public string Gender { get; set; } = null!;
         public string EmployeeType { get; set; } = null!;
+        public int? DepartmentId { get; set; }
     }
 }

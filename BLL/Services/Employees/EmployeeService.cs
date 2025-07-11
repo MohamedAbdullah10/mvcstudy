@@ -3,17 +3,13 @@ using DAL.Entities.Common.Enums;
 using DAL.Entities.Employees;
 using DAL.Persistance.Repositories;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.WebSockets;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BLL.Services.Employees
 {
-    public class EmployeeService:IEmployeeService
+    public class EmployeeService : IEmployeeService
     {
         private readonly IGenericRepository<Employee> _emprepo;
 
@@ -24,124 +20,128 @@ namespace BLL.Services.Employees
 
         public int CreateEmployee(CreateEmployeeDto createEmployee)
         {
-            if (!Enum.TryParse<Gender>(createEmployee.Gender,out var gender))
+            // 1. التحقق من الـ Enums بأمان
+            if (!Enum.TryParse<Gender>(createEmployee.Gender, true, out var gender) ||
+                !Enum.TryParse<EmployeeType>(createEmployee.EmployeeType, true, out var empType))
+            {
+                // لو القيمة اللي جاية غلط (مثلاً "Malee" أو نص فاضي)، ارجع بـ 0
                 return 0;
-            if (!Enum.TryParse<EmployeeType>(createEmployee.EmployeeType, out var emptype))
-                return 0;
+            }
+
             var emp = new Employee
             {
                 Name = createEmployee.Name,
                 Age = createEmployee.Age,
                 Address = createEmployee.Address,
                 HiringDate = createEmployee.HiringDate,
-                Gender = gender,
-                EmployeeType = emptype,
+                Gender = gender, // استخدام القيمة بعد تحويلها
+                EmployeeType = empType, // استخدام القيمة بعد تحويلها
                 Email = createEmployee.Email,
                 Salary = createEmployee.Salary,
                 PhoneNumber = createEmployee.PhoneNumber,
                 IsActive = createEmployee.IsActive,
-                CreationBy = 1,
-                CreationOn = DateTime.Now
-              
-
-
-
-
-
-
+                DepartmentId = createEmployee.DepartmentId,
+                CreationOn = DateTime.Now,
+                CreationBy = 1 
+        
             };
-            if(emp is { })
-              return _emprepo.Add(emp);
 
-            return 0;
+            return _emprepo.Add(emp);
         }
 
-        public int EditeEmployee(UpdateEmployeeDto updateEmployee)
+        public int EditEmployee(UpdateEmployeeDto updateEmployee)
         {
             var emp = _emprepo.Get(updateEmployee.Id);
-            if (emp is { }) {
-                emp.Name = updateEmployee.Name;
-                emp.Salary = updateEmployee.Salary;
-                emp.Address = updateEmployee.Address;
-                emp.Email = updateEmployee.Email;
-                emp.Age = updateEmployee.Age;
-                emp.Gender = Enum.Parse<Gender>(updateEmployee.Gender);
-                emp.EmployeeType = Enum.Parse<EmployeeType>(updateEmployee.EmployeeType);
-                emp.IsActive = updateEmployee.IsActive;
-                emp.HiringDate = updateEmployee.HiringDate;
-                emp.PhoneNumber = updateEmployee.PhoneNumber;
-                return _emprepo.Update(emp);
-            
-            }
-            return 0;
-        }
 
-        public EmployeeDetailsToReturnDto?GET(int id)
-        {
-            var emp = _emprepo.Get(id);
-            if (emp is { }) {
-
-                return new EmployeeDetailsToReturnDto
-                {
-                    Name = emp.Name,
-                    Age = emp.Age,
-                    Address = emp.Address,
-                    HiringDate = emp.HiringDate,
-                    Gender = emp.Gender.ToString(),
-                    EmployeeType =emp.EmployeeType.ToString(),
-                    Email = emp.Email,
-                    Salary = emp.Salary,
-                    PhoneNumber = emp.PhoneNumber,
-                    IsActive = emp.IsActive,
-                    CreationBy=1,
-                    CreationOn=emp.CreationOn,
-                    Id=emp.Id,
-                    LastModifiedBy = emp.LastModifiedBy
-                    
-                    
-                    
-
-
-
-                };
-            
-            
-            }
-            return null;
            
-        }
+            if (emp is null)
+                return 0;
 
-        public IEnumerable<EmployeeToReturnDto> GetAll()
-        {
-            var emp = _emprepo.GetAllQueryable().Select(e => new EmployeeToReturnDto
+           
+            if (!Enum.TryParse<Gender>(updateEmployee.Gender, true, out var gender) ||
+                !Enum.TryParse<EmployeeType>(updateEmployee.EmployeeType, true, out var empType))
             {
-                Name = e.Name,
-                Address = e.Address,
-                Age = e.Age,
-                Email = e.Email,
-                Salary = e.Salary,
-                IsActive = e.IsActive,
-                Gender = e.Gender.ToString(),
-                EmployeeType = e.EmployeeType.ToString(),
-                HiringDate = e.HiringDate,
-                PhoneNumber = e.PhoneNumber
-
-
-
-
+                return 0; 
             }
 
+            
+            emp.Name = updateEmployee.Name;
+            emp.Age = updateEmployee.Age;
+            emp.Address = updateEmployee.Address;
+            emp.HiringDate = updateEmployee.HiringDate;
+            emp.Gender = gender;
+            emp.EmployeeType = empType;
+            emp.Email = updateEmployee.Email;
+            emp.Salary = updateEmployee.Salary;
+            emp.PhoneNumber = updateEmployee.PhoneNumber;
+            emp.DepartmentId = updateEmployee.DepartmentId;
+            emp.IsActive = updateEmployee.IsActive;
+            emp.LastModifiedOn = DateTime.Now;
+            // emp.LastModifiedBy = 1; // NOTE: This should be the ID of the logged-in user
 
-            ).AsNoTracking();
+            return _emprepo.Update(emp);
+        }
 
-            return emp.ToList();
+        public EmployeeDetailsToReturnDto? GET(int id)
+        {
+            var emp = _emprepo.GetAllQueryable().Include(e=>e.Department)
+                .FirstOrDefault(e=>e.Id==id);
+
+            if (emp is null)
+                return null;
+
+           
+            return new EmployeeDetailsToReturnDto
+            {
+                Id = emp.Id,
+                Name = emp.Name,
+                Age = emp.Age,
+                Address = emp.Address,
+                HiringDate = emp.HiringDate,
+                Gender = emp.Gender.ToString(), // CHANGE: تحويل الـ enum إلى string
+                EmployeeType = emp.EmployeeType.ToString(), // CHANGE: تحويل الـ enum إلى string
+                Email = emp.Email,
+                Salary = emp.Salary,
+                PhoneNumber = emp.PhoneNumber,
+                IsActive = emp.IsActive,
+                DepartmentId = emp.DepartmentId,
+               DepartmentName=emp.Department!=null?emp.Department.Name:"N/A", 
+                CreationBy = emp.CreationBy, 
+                CreationOn = emp.CreationOn,
+                LastModifiedBy = emp.LastModifiedBy, // FIX: عرض القيمة الحقيقية
+                LastModifiedOn = emp.LastModifiedOn
+
+            };
+        }
+
+        public IEnumerable<EmployeeToReturnDto> GetAll(string search)
+        {
+            return _emprepo.GetAllQueryable().Where(s=> string.IsNullOrEmpty(search)||s.Name.ToLower().Contains(search.ToLower())).Include(e=>e.Department)
+                           .Select(e => new EmployeeToReturnDto
+                           {
+                               Id = e.Id,
+                               Name = e.Name,
+                               Age = e.Age,
+                               Address = e.Address,
+                               HiringDate = e.HiringDate,
+                               Gender = e.Gender.ToString(), 
+                               EmployeeType = e.EmployeeType.ToString(), 
+                               Email = e.Email,
+                               DepartmentId = e.DepartmentId,
+                               DepartmentName = e.Department != null ? e.Department.Name : "N/A",
+                               Salary = e.Salary,
+                               PhoneNumber = e.PhoneNumber,
+                               IsActive = e.IsActive
+                           }).ToList();
         }
 
         public int RemoveEmployee(int id)
         {
             var emp = _emprepo.Get(id);
+
             if (emp is null)
                 return 0;
+
             return _emprepo.Delete(emp);
         }
     }

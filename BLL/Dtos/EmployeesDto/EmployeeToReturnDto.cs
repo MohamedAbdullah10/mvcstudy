@@ -18,8 +18,9 @@ namespace BLL.Dtos.EmployeesDto
         public decimal Salary { get; set; }
         public string? PhoneNumber { get; set; }
         public DateTime HiringDate { get; set; }
-
         public string Gender { get; set; } = null!;
         public string EmployeeType { get; set; } = null!;
+        public int? DepartmentId { get; set; }
+        public string? DepartmentName { get; set; }
     }
 }
