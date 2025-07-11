@@ -29,8 +29,15 @@ namespace PL.Controllers
         // GET: Employee
         public IActionResult Index(string search)
         {
-            ViewData["CurrentFilter"] = search;
             var employees = _empserv.GetAll(search);
+            ViewData["CurrentFilter"] = search;
+
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+               
+                return PartialView("partial/_EmployeeTablePartial", employees);
+            }
+           
             return View(employees);
         }
 

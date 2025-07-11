@@ -1,0 +1,32 @@
+﻿@model IEnumerable<EmployeeToReturnDto>
+
+
+@foreach (var emp in Model)
+{
+    <tr>
+        <td>@emp.Name</td>
+        <td>@emp.Age</td>
+        <td>@emp.Address</td>
+        <td>@emp.Email</td>
+        <td>@emp.Salary.ToString("C")</td>
+        <td>@emp.PhoneNumber</td>
+        <td>@emp.HiringDate.ToShortDateString()</td>
+        <td>@emp.Gender</td>
+        <td>@emp.EmployeeType</td>
+
+        <td>
+            @if (emp.IsActive)
+            {
+                <span class="text-success">Active</span>
+            }
+            else
+            {
+                <span class="text-danger">Inactive</span>
+            }
+        </td>
+        <td>@emp.DepartmentName</td>
+        <td>
+            <partial name="_ButtonsPartial" model=emp.Id>
+        </td>
+    </tr>
+}

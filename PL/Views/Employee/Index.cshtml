@@ -40,37 +40,9 @@
             <th></th>
         </tr>
     </thead>
-    <tbody>
-        @foreach (var emp in Model)
-        {
-            <tr>
-                <td>@emp.Name</td>
-                <td>@emp.Age</td>
-                <td>@emp.Address</td>
-                <td>@emp.Email</td>
-                <td>@emp.Salary.ToString("C")</td>
-                <td>@emp.PhoneNumber</td>
-                <td>@emp.HiringDate.ToShortDateString()</td>
-                <td>@emp.Gender</td>
-                <td>@emp.EmployeeType</td>
-               
-                <td>
-                    @if (emp.IsActive)
-                    {   
-                        <span class="text-success">Active</span>
-                    }
-                    else
-                    {
-                        <span class="text-danger">Inactive</span>
-                    }
-                </td>
-                <td>@emp.DepartmentName</td>
-                <td>
-                  <partial name="_ButtonsPartial" model=emp.Id>
-                 </td>
-            </tr>
-        }
-    </tbody>
+    <tbody id="employee-table-body">
+        <partial name="partial/_EmployeeTablePartial" model="Model">
+    </tbody >
 </table>
 @section Scripts {
     <script>
@@ -127,6 +99,38 @@
                     }
                 });
             });
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+
+            let searchTimeout;
+
+            // عند الكتابة في مربع البحث
+            $('#searchInput').on('keyup', function () {
+                const searchTerm = $(this).val();
+
+                // هذا الجزء يمنع إرسال طلب مع كل حرف، وينتظر حتى يتوقف المستخدم عن الكتابة
+                clearTimeout(searchTimeout);
+
+                searchTimeout = setTimeout(function () {
+                    $.ajax({
+                        url: '@Url.Action("Index", "Employee")', // رابط الأكشن في الكنترولر
+                        type: 'GET',
+                        data: { search: searchTerm }, // إرسال كلمة البحث
+                        success: function (result) {
+                            // عند النجاح، استبدل محتوى الجدول بالنتيجة الجديدة
+                            $('#employee-table-body').html(result);
+                        },
+                        error: function () {
+                            alert('حدث خطأ أثناء البحث.');
+                        }
+                    });
+                }, 300); // تأخير 300 ميللي ثانية
+            });
+
+            // كود الحذف الخاص بك يبقى كما هو
+            // ...
         });
     </script>
 }
