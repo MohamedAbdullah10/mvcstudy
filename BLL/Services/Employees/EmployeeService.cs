@@ -2,6 +2,7 @@
 using DAL.Entities.Common.Enums;
 using DAL.Entities.Employees;
 using DAL.Persistance.Repositories;
+using DAL.Persistance.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -11,11 +12,13 @@ namespace BLL.Services.Employees
 {
     public class EmployeeService : IEmployeeService
     {
-        private readonly IGenericRepository<Employee> _emprepo;
+        //private readonly IGenericRepository<Employee> _emprepo;
+        private readonly IUnitOfWork unitOfWork;
 
-        public EmployeeService(IGenericRepository<Employee> emprepo)
+        public EmployeeService(/*IGenericRepository<Employee> emprepo*/IUnitOfWork unitOfWork)
         {
-            _emprepo = emprepo;
+            this.unitOfWork = unitOfWork;
+            //_emprepo = emprepo;
         }
 
         public int CreateEmployee(CreateEmployeeDto createEmployee)
@@ -46,11 +49,15 @@ namespace BLL.Services.Employees
         
             };
 
-            return _emprepo.Add(emp);
+           unitOfWork.Repository<Employee>().Add(emp);
+            
+
+            return unitOfWork.Complete();
         }
 
         public int EditEmployee(UpdateEmployeeDto updateEmployee)
         {
+            var _emprepo = unitOfWork.Repository<Employee>();
             var emp = _emprepo.Get(updateEmployee.Id);
 
            
@@ -79,11 +86,13 @@ namespace BLL.Services.Employees
             emp.LastModifiedOn = DateTime.Now;
             // emp.LastModifiedBy = 1; // NOTE: This should be the ID of the logged-in user
 
-            return _emprepo.Update(emp);
+             _emprepo.Update(emp);
+            return unitOfWork.Complete();
         }
 
         public EmployeeDetailsToReturnDto? GET(int id)
         {
+            var _emprepo = unitOfWork.Repository<Employee>();
             var emp = _emprepo.GetAllQueryable().Include(e=>e.Department)
                 .FirstOrDefault(e=>e.Id==id);
 
@@ -116,6 +125,7 @@ namespace BLL.Services.Employees
 
         public IEnumerable<EmployeeToReturnDto> GetAll(string search)
         {
+            var _emprepo = unitOfWork.Repository<Employee>();
             return _emprepo.GetAllQueryable().Where(s=> string.IsNullOrEmpty(search)||s.Name.ToLower().Contains(search.ToLower())).Include(e=>e.Department)
                            .Select(e => new EmployeeToReturnDto
                            {
@@ -137,12 +147,15 @@ namespace BLL.Services.Employees
 
         public int RemoveEmployee(int id)
         {
+            var _emprepo = unitOfWork.Repository<Employee>();
             var emp = _emprepo.Get(id);
 
             if (emp is null)
                 return 0;
 
-            return _emprepo.Delete(emp);
+             _emprepo.Delete(emp);
+
+            return unitOfWork.Complete();
         }
     }
 }

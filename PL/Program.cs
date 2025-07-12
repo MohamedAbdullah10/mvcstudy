@@ -2,6 +2,7 @@ using BLL.Services.Departments;
 using BLL.Services.Employees;
 using DAL.Persistance.Data;
 using DAL.Persistance.Repositories;
+using DAL.Persistance.UnitOfWork;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,6 +25,7 @@ namespace PL
             builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             builder.Services.AddScoped<IDepartmentService, DepartementService>();
             builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             //builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
             builder.Services.AddAutoMapper(cfg => cfg.AddProfile<MappingProfile>());
 

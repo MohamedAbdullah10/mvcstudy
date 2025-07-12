@@ -19,13 +19,13 @@ namespace DAL.Persistance.Repositories
             _context = context;
         }
 
-        public int Add(T entity)
+        public void Add(T entity)
         {
            _context.Add(entity);
-            return _context.SaveChanges();
+            //return _context.SaveChanges();
         }
 
-        public int Delete(T entity)
+        public void Delete(T entity)
         {
             if (entity is ISoftDelete delete) {
 
@@ -38,7 +38,7 @@ namespace DAL.Persistance.Repositories
             else { 
                 _context.Remove(entity);
                  }
-            return _context.SaveChanges();
+           // return _context.SaveChanges();
         }
 
         public T? Get(int id)
@@ -60,10 +60,10 @@ namespace DAL.Persistance.Repositories
             return _context.Set<T>();
         }
 
-        public int Update(T entity)
+        public void Update(T entity)
         {
             _context.Update(entity);
-            return _context.SaveChanges();  
+            //return _context.SaveChanges();  
         }
     }
 }
