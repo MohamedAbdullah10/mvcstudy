@@ -1,4 +1,5 @@
-﻿using BLL.Dtos.EmployeesDto;
+﻿using AutoMapper;
+using BLL.Dtos.EmployeesDto;
 using BLL.Services.Departments;
 using BLL.Services.Employees;
 using DAL.Entities.Common.Enums;
@@ -18,12 +19,14 @@ namespace PL.Controllers
         private readonly ILogger<EmployeeController> _logger;
         private readonly IDepartmentService departmentService;
         private readonly IWebHostEnvironment _webHost;
-        public EmployeeController(IEmployeeService empserv, IWebHostEnvironment webHost, ILogger<EmployeeController> logger, IDepartmentService departmentService)
+        private readonly IMapper _mapper;
+        public EmployeeController(IEmployeeService empserv, IWebHostEnvironment webHost, ILogger<EmployeeController> logger, IDepartmentService departmentService, IMapper mapper)
         {
             _empserv = empserv;
             _webHost = webHost;
             _logger = logger;
             this.departmentService = departmentService;
+            _mapper = mapper;
         }
 
         // GET: Employee
@@ -63,21 +66,8 @@ namespace PL.Controllers
             try
             {
                 // Map ViewModel to DTO
-                var dto = new CreateEmployeeDto
-                {
-                    Name = model.Name,
-                    Age = model.Age,
-                    Address = model.Address,
-                    Email = model.Email,
-                    PhoneNumber = model.PhoneNumber,
-                    Salary = model.Salary,
-                    HiringDate = model.HiringDate,
-                    IsActive = model.IsActive,
-                    Gender = model.Gender,
-                    DepartmentId = model.DepartmentId,
-                    EmployeeType = model.EmployeeType
-                    
-                };
+                var dto = _mapper.Map<CreateEmployeeDto>(model);
+
 
                 var result = _empserv.CreateEmployee(dto);
 
@@ -106,21 +96,8 @@ namespace PL.Controllers
             }
 
             // Map DTO to ViewModel
-            var model = new EmployeeViewModel
-            {
-                Id = empDto.Id,
-                Name = empDto.Name,
-                Age = empDto.Age,
-                Address = empDto.Address,
-                Email = empDto.Email,
-                PhoneNumber = empDto.PhoneNumber,
-                Salary = empDto.Salary,
-                HiringDate = empDto.HiringDate,
-                IsActive = empDto.IsActive,
-                Gender = empDto.Gender,
-                DepartmentId = empDto.DepartmentId,
-                EmployeeType = empDto.EmployeeType
-            };
+            var model =_mapper.Map<EmployeeViewModel>(empDto);
+
 
             PopulateDropdowns(model);
             return View(model);
