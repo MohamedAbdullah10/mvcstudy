@@ -41,18 +41,18 @@ namespace DAL.Persistance.Repositories
            // return _context.SaveChanges();
         }
 
-        public T? Get(int id)
+        public async Task<T>? Get(int id)
         {
 
-            return _context.Set<T>().Find(id);
+            return await _context.Set<T>().FindAsync(id);
         }
 
-        public IEnumerable<T> GetAll(bool WithAsNoTracking = true)
+        public async Task <IEnumerable<T>> GetAll(bool WithAsNoTracking = true)
         {
             if(WithAsNoTracking)
-                return _context.Set<T>().AsNoTracking().ToList();
+                return await _context.Set<T>().AsNoTracking().ToListAsync();
             else
-                return _context.Set<T>().ToList();
+                return await _context.Set<T>().ToListAsync();
         }
 
         public IQueryable<T> GetAllQueryable()

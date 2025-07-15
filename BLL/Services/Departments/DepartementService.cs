@@ -1,4 +1,5 @@
-﻿using BLL.Dtos.DepartementsDto;
+﻿using AutoMapper;
+using BLL.Dtos.DepartementsDto;
 using DAL.Entities.Departments;
 using DAL.Persistance.Repositories;
 using DAL.Persistance.UnitOfWork;
@@ -17,45 +18,53 @@ namespace BLL.Services.Departments
         //private readonly IGenericRepository<Department> _deptrepo;
         private readonly IUnitOfWork unitOfWork;
         private readonly IGenericRepository<Department> _deptrepo;
-        public DepartementService(/*IGenericRepository<Department> deptrepo*/IUnitOfWork unitOfWork)
+        private readonly IMapper _mapper;
+        public DepartementService(/*IGenericRepository<Department> deptrepo*/IUnitOfWork unitOfWork, IMapper mapper)
         {
             this.unitOfWork = unitOfWork;
-            _deptrepo=unitOfWork.Repository<Department>();
+            _deptrepo = unitOfWork.Repository<Department>();
+            _mapper = mapper;
             //_deptrepo = deptrepo;
         }
 
-        public IEnumerable<DepartmentToReturnDto> GetAll()
+        //public   IEnumerable<DepartmentToReturnDto> GetAll()
+        //{
+        //    //var dept = _deptrepo.GetAll();
+        //    //foreach (var d in dept)
+        //    //{
+        //    //   yield return new DepartmentToReturnDto
+        //    //   {
+        //    //       Id = d.Id,
+        //    //       Name = d.Name,
+        //    //       Code = d.Code,
+        //    //       Description = d.Description,
+        //    //       CreationDate = d.CreationDate
+        //    //   };
+
+        //    //}
+        //    //var _deptrepo = unitOfWork.Repository<Department>();
+        //    var dept = _deptrepo.GetAllQueryable().Select(x => new DepartmentToReturnDto
+        //    {
+
+        //        Id = x.Id,
+        //        Name = x.Name,
+        //        Code = x.Code,
+        //        CreationDate = x.CreationDate
+        //    }).AsNoTracking();
+
+        //    return dept.ToList();
+        //}
+        public async Task<IEnumerable<DepartmentToReturnDto>> GetAllAsync()
         {
-            //var dept = _deptrepo.GetAll();
-            //foreach (var d in dept)
-            //{
-            //   yield return new DepartmentToReturnDto
-            //   {
-            //       Id = d.Id,
-            //       Name = d.Name,
-            //       Code = d.Code,
-            //       Description = d.Description,
-            //       CreationDate = d.CreationDate
-            //   };
+            var departmentsQuery = _deptrepo.GetAllQueryable().AsNoTracking();
 
-            //}
-            //var _deptrepo = unitOfWork.Repository<Department>();
-            var dept = _deptrepo.GetAllQueryable().Select(x => new DepartmentToReturnDto
-            {
-
-                Id = x.Id,
-                Name = x.Name,
-                Code = x.Code,
-                CreationDate = x.CreationDate
-            }).AsNoTracking();
-
-            return dept.ToList();
+            // Use AutoMapper's ProjectTo for a very efficient query
+            return await _mapper.ProjectTo<DepartmentToReturnDto>(departmentsQuery).ToListAsync();
         }
-
-        public DepartmentDetailsToReturnDto? Get(int Id)
+        public async Task<DepartmentDetailsToReturnDto>? Get(int Id)
         {
             //var _deptrepo = unitOfWork.Repository<Department>();
-            var dept = _deptrepo.Get(Id);
+            var dept = await _deptrepo.Get(Id);
             if (dept is { })
             {
                 return new DepartmentDetailsToReturnDto
@@ -78,7 +87,7 @@ namespace BLL.Services.Departments
 
 
         }
-        public int CreateDepartment(CreateDepartmentDto createDepartmentDto)
+        public async Task<int> CreateDepartment(CreateDepartmentDto createDepartmentDto)
         {
             var dept = new Department
             {
@@ -92,27 +101,27 @@ namespace BLL.Services.Departments
 
             //unitOfWork.Repository<Department>().Add(dept);
             _deptrepo.Add(dept);
-            return unitOfWork.Complete();
+            return await unitOfWork.Complete();
         }
 
-        public bool DeleteDepartment(int id)
+        public async Task<bool> DeleteDepartment(int id)
         {
             //var _deptrepo = unitOfWork.Repository<Department>();
-            var dept = _deptrepo.Get(id);
+            var dept =await _deptrepo.Get(id);
             if (dept == null)
                 return false;
 
             _deptrepo.Delete(dept);
-            return unitOfWork.Complete() > 0;
+            return await unitOfWork.Complete() > 0;
 
         }
 
 
 
-        public int UpdateDepartment(UpdateDepartmentDto updateDepartmentDto)
+        public async Task<int> UpdateDepartment(UpdateDepartmentDto updateDepartmentDto)
         {
             //var _deptrepo = unitOfWork.Repository<Department>();
-            var dept = _deptrepo.Get(updateDepartmentDto.Id);
+            var dept = await _deptrepo.Get(updateDepartmentDto.Id);
             if (dept == null)
                 return 0;
             dept.Name = updateDepartmentDto.Name;
@@ -125,7 +134,7 @@ namespace BLL.Services.Departments
 
 
              _deptrepo.Update(dept);
-            return unitOfWork.Complete();
+            return await unitOfWork.Complete();
         }
 
 

@@ -5,10 +5,11 @@ namespace BLL.Services.Departments
 {
     public interface IDepartmentService
     {
-        IEnumerable<DepartmentToReturnDto> GetAll();
-        DepartmentDetailsToReturnDto? Get(int Id);
-        int CreateDepartment(CreateDepartmentDto createDepartmentDto);
-        int UpdateDepartment(UpdateDepartmentDto updateDepartmentDto);
-        bool DeleteDepartment(int id);
+        Task<IEnumerable<DepartmentToReturnDto>> GetAllAsync();
+        //IEnumerable<DepartmentToReturnDto> GetAll();
+        Task<DepartmentDetailsToReturnDto>? Get(int Id);
+        Task<int> CreateDepartment(CreateDepartmentDto createDepartmentDto);
+        Task<int> UpdateDepartment(UpdateDepartmentDto updateDepartmentDto);
+        Task<bool> DeleteDepartment(int id);
     }
 }
