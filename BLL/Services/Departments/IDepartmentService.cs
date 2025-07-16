@@ -7,9 +7,9 @@ namespace BLL.Services.Departments
     {
         Task<IEnumerable<DepartmentToReturnDto>> GetAllAsync();
         //IEnumerable<DepartmentToReturnDto> GetAll();
-        Task<DepartmentDetailsToReturnDto>? Get(int Id);
-        Task<int> CreateDepartment(CreateDepartmentDto createDepartmentDto);
-        Task<int> UpdateDepartment(UpdateDepartmentDto updateDepartmentDto);
-        Task<bool> DeleteDepartment(int id);
+        Task<DepartmentDetailsToReturnDto?> GetAsync(int Id);
+        Task<int> CreateDepartmentAsync(CreateDepartmentDto createDepartmentDto);
+        Task<int> UpdateDepartmentAsync(UpdateDepartmentDto updateDepartmentDto);
+        Task<bool> DeleteDepartmentAsync(int id);
     }
 }

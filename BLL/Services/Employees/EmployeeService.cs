@@ -186,7 +186,7 @@ public class EmployeeService : IEmployeeService
     {
         var emp = _mapper.Map<Employee>(createEmployeeDto);
         _employeeRepository.Add(emp);
-        return await _unitOfWork.Complete();
+        return await _unitOfWork.CompleteAsync();
     }
 
     public async Task<int> EditEmployeeAsync(UpdateEmployeeDto updateEmployeeDto)
@@ -196,7 +196,7 @@ public class EmployeeService : IEmployeeService
 
         _mapper.Map(updateEmployeeDto, emp);
         _employeeRepository.Update(emp);
-        return await _unitOfWork.Complete();
+        return await _unitOfWork.CompleteAsync();
     }
 
     public async Task<EmployeeDetailsToReturnDto?> GetAsync(int id)
@@ -221,6 +221,6 @@ public class EmployeeService : IEmployeeService
         if (emp == null) return 0;
 
         _employeeRepository.Delete(emp);
-        return await _unitOfWork.Complete();
+        return await _unitOfWork.CompleteAsync();
     }
 }

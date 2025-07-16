@@ -11,6 +11,6 @@ namespace DAL.Persistance.UnitOfWork
     {
         IGenericRepository<T> Repository<T>() where T : class;
 
-        Task<int> Complete();     
+        Task<int> CompleteAsync();     
     }
 }

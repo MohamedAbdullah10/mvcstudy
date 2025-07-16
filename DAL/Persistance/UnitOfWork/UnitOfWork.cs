@@ -41,7 +41,7 @@ namespace DAL.Persistance.UnitOfWork
             return (IGenericRepository<T>)_repositories[type];
 
         }
-        public async Task<int> Complete()
+        public async Task<int> CompleteAsync()
         {
             return  await  _context.SaveChangesAsync();
         }

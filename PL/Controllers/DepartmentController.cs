@@ -223,7 +223,7 @@ namespace PL.Controllers
 
             try
             {
-                var result = await _departmentService.CreateDepartment(departmentDto);
+                var result = await _departmentService.CreateDepartmentAsync(departmentDto);
                 if (result > 0)
                 {
                     TempData["SuccessMessage"] = "Department Created Successfully";
@@ -241,7 +241,7 @@ namespace PL.Controllers
 
         public async Task<IActionResult> Details(int id)
         {
-            var deptDto = await _departmentService.Get(id);
+            var deptDto = await _departmentService.GetAsync(id);
             if (deptDto == null)
                 return NotFound();
 
@@ -251,7 +251,7 @@ namespace PL.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
-            var deptDto = await _departmentService.Get(id);
+            var deptDto = await _departmentService.GetAsync(id);
             if (deptDto == null)
                 return NotFound();
 
@@ -271,7 +271,7 @@ namespace PL.Controllers
                 var dto = _mapper.Map<UpdateDepartmentDto>(departmentVM);
                 dto.Id = id; 
 
-                var result = await _departmentService.UpdateDepartment(dto);
+                var result = await _departmentService.UpdateDepartmentAsync(dto);
                 if (result > 0)
                 {
                     TempData["SuccessMessage"] = "Department Updated Successfully";
@@ -290,7 +290,7 @@ namespace PL.Controllers
         [HttpGet]
         public async Task<IActionResult> Delete(int id)
         {
-            var deptDto = await _departmentService.Get(id);
+            var deptDto = await _departmentService.GetAsync(id);
             if (deptDto == null) return NotFound();
 
             return View(deptDto);
@@ -300,7 +300,7 @@ namespace PL.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var result = await _departmentService.DeleteDepartment(id);
+            var result = await _departmentService.DeleteDepartmentAsync(id);
             if (result)
             {
                 TempData["SuccessMessage"] = "Department Deleted Successfully";
@@ -308,7 +308,7 @@ namespace PL.Controllers
             }
 
             ModelState.AddModelError("", "Failed to delete department.");
-            var deptDto = await _departmentService.Get(id);
+            var deptDto = await _departmentService.GetAsync(id);
             return View("Delete", deptDto);
         }
     }
