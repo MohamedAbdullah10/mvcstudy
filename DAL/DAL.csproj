@@ -22,7 +22,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Identity\" />
     <Folder Include="Persistance\Data\DataSeed\" />
   </ItemGroup>
 

@@ -11,10 +11,11 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using DAL.Identity;
 
 namespace DAL.Persistance.Data
 {
-    public class AppDbContext:IdentityDbContext
+    public class AppDbContext:IdentityDbContext<ApplicationUser>
     {
 
         public AppDbContext(DbContextOptions<AppDbContext>options):base(options)
